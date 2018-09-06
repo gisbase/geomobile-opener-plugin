@@ -1,0 +1,14 @@
+{
+  "name": "com.gisbase.geomobile.opener.plugin",
+  "version": "0.0.1",
+  "displayName": "geomobile-opener-plugin",
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {}
+  },
+  "dependencies": {
+    "cordova-android": "7.1.0"
+  }
+}

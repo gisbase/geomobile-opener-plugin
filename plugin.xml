@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+		xmlns="http://apache.org/cordova/ns/plugins/1.0"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		id="geomobile-plugin"
+		version="0.0.1">
+
+	<name>geomobile-opener-plugin</name>
+	
+	<js-module name="GeomobilePlugin" src="www/GeomobilePlugin.js">
+        <clobbers target="GeomobilePlugin" />
+    </js-module>
+    
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="GeomobilePlugin">
+                <param name="android-package" value="com.gisbase.geomobile.plugin.GeomobilePlugin" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+		<config-file target="AndroidManifest.xml" parent="application">
+			<provider
+				android:name="android.support.v4.content.FileProvider"
+				android:authorities="${applicationId}.transfer.fileprovider"
+				android:exported="false"
+				android:grantUriPermissions="true">
+				<meta-data
+					android:name="android.support.FILE_PROVIDER_PATHS"
+					android:resource="@xml/geomobile_provider_paths"/>
+			</provider>
+		</config-file>
+		<source-file src="geomobile_provider_paths.xml" target-dir="res/xml" />
+		<source-file src="src/android/com/gisbase/geomobile/FileProvider.java" target-dir="src/com/gisbase/geomobile" />
+		<source-file src="src/android/com/gisbase/geomobile/abstraction/BroadcasterData.java" target-dir="src/com/gisbase/geomobile/abstraction" />
+        <source-file src="src/android/com/gisbase/geomobile/plugin/GeomobilePlugin.java" target-dir="src/com/gisbase/geomobile/plugin" />
+		<framework src="com.android.support:support-v4:26+" />
+    </platform>
+</plugin>
