@@ -86,6 +86,7 @@ public class GeomobilePlugin extends CordovaPlugin {
      * @param receiver
      */
     protected void unregisterReceiver(android.content.BroadcastReceiver receiver) {
+		Log.v(TAG, String.format("unregisterReceiver: %s", receiver.toString()));
         LocalBroadcastManager.getInstance(super.webView.getContext()).unregisterReceiver(receiver);
     }
 
@@ -179,6 +180,10 @@ public class GeomobilePlugin extends CordovaPlugin {
     }
 
     private void sendGeomobileData(){
+		if(dataFile == null){
+			Log.v(TAG, "temporary fix: dataFile is null");
+			return;
+		}
         sendBroadcastData(GEOMOBILE_APP, GEOMOBILE_LOAD, dataFile);
     }
 
@@ -222,8 +227,9 @@ public class GeomobilePlugin extends CordovaPlugin {
                     Log.v(TAG, String.format("received event: %s", GEOMOBILE_READY));
                     //receiveFile(context, intent, GEOMOBILE_READY);
                     sendGeomobileData();
-                    unregisterReceiver(this);
-                    receiverMap.remove(this);
+					dataFile = null;
+                    unregisterReceiver(receiverMap.get(GEOMOBILE_READY));
+                    receiverMap.remove(receiverMap.get(GEOMOBILE_READY));
                 }
             };
 
