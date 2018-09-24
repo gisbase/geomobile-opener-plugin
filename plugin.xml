@@ -20,7 +20,7 @@
         <config-file parent="/*" target="AndroidManifest.xml"></config-file>
 		<config-file target="AndroidManifest.xml" parent="application">
 			<provider
-				android:name="android.support.v4.content.FileProvider"
+				android:name="com.gisbase.geomobile.FileProvider"
 				android:authorities="${applicationId}.transfer.fileprovider"
 				android:exported="false"
 				android:grantUriPermissions="true">
