@@ -186,18 +186,9 @@ public class GeomobilePlugin extends CordovaPlugin {
 		}
         sendBroadcastData(GEOMOBILE_APP, GEOMOBILE_LOAD, dataFile);
     }
-
-    private boolean open(JSONObject data, Integer flags, String category) throws JSONException {
-        Context context = cordova.getActivity().getApplicationContext();
-        data.put("appCallback", context.getPackageName());
-        dataFile = createFile("openData", data.toString());
-        if(dataFile == null){
-            Log.e(TAG, "dataFile null");
-            return false;
-        }
-
-        //registrar evento do GEOMOBILE_UPDATES
-        if (!receiverMap.containsKey(GEOMOBILE_UPDATES)) {
+	
+	private boolean registerUpdatesListener() throws JSONException {
+		if (!receiverMap.containsKey(GEOMOBILE_UPDATES)) {
             final BroadcastReceiver geomobileReadyReceiver = new BroadcastReceiver() {
 
                 @Override
@@ -216,6 +207,23 @@ public class GeomobilePlugin extends CordovaPlugin {
                 return false;
             }
         }
+        return true;
+	}
+
+    private boolean open(JSONObject data, Integer flags, String category) throws JSONException {
+        Context context = cordova.getActivity().getApplicationContext();
+        data.put("appCallback", context.getPackageName());
+        dataFile = createFile("openData", data.toString());
+        if(dataFile == null){
+            Log.e(TAG, "dataFile null");
+            return false;
+        }
+
+        //registrar evento do GEOMOBILE_UPDATES
+        if(registerUpdatesListener() == false){
+			Log.e(TAG, "failed to register GEOMOBILE_UPDATES");
+			return false;
+		}
 
         //registrar evento do GEOMOBILE_READY
         if (!receiverMap.containsKey(GEOMOBILE_READY)) {
@@ -247,6 +255,12 @@ public class GeomobilePlugin extends CordovaPlugin {
 
         return true;
     }
+	
+	private boolean receivedMessage(String message) throws JSONException {
+		String receivedMessage = message + ".received";
+		sendBroadcastData(GEOMOBILE_APP, receivedMessage, createFile("receivedMessage", "\""+receivedMessage+"\""));
+		return true;
+	}
 
     /**
      * @param action          The action to execute.
@@ -270,6 +284,18 @@ public class GeomobilePlugin extends CordovaPlugin {
 
         } else if (action.equals("closeGeoMobile")) {
             clearReceivers();
+            result = true;
+
+        } else if (action.equals("registerListenerGeoMobile")) {
+            result = registerUpdatesListener();
+
+        } else if (action.equals("openWithoutDataGeoMobile")) {
+            openApp(GEOMOBILE_APP);
+            result = true;
+
+        } else if (action.equals("receivedMessage")) {
+			String message = args.getString(0);
+            receivedMessage(message);
             result = true;
 
         }
